@@ -6,12 +6,12 @@ import input from "input";
 
 import { ForwardController } from "./ForwardController.js";
 import { getIdHashSession, getKeywords } from "./utils.js";
+import {TARGET_CHANNEL, USER_NUMBER} from "./config.js"
 
-async function main() {    
-    const { API_ID, API_HASH, SESSION_STRING } = await getIdHashSession("066");
+async function main() {
+   
+    const { API_ID, API_HASH, SESSION_STRING } = await getIdHashSession(USER_NUMBER);
     const { monitoredChannels, populatedAreas } = await getKeywords();
-
-    console.log("🚀 Запуск минимального MTProto бота...");
 
     const client = new TelegramClient(new StringSession(SESSION_STRING), API_ID, API_HASH);
 
@@ -25,7 +25,7 @@ async function main() {
     console.log("✅ Авторизация успешна!");
 
     const forwardController = new ForwardController(client, {
-        targetChannel: -1002950885092,
+        targetChannel: TARGET_CHANNEL,
         monitoredChannels,
         populatedAreas
     });
@@ -34,10 +34,8 @@ async function main() {
     client.addEventHandler(forwardController.messageListener, new EditedMessage({}));
 
     console.log("🎯 Бот запущен! Ожидание сообщений...");
-    console.log("Нажмите Ctrl+C для остановки");
 }
 
-// Запуск
 main().catch(console.error);
 
 // Обработка завершения

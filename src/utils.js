@@ -1,5 +1,6 @@
 import input from "input";
 import fs from "fs";
+import { ID_HASH_SESSION } from "./config.js";
 
 export const readJson = async (path) => {
     return new Promise((resolve, reject) => {
@@ -38,9 +39,10 @@ async function inputIdHashSession() {
     }
 }
 
-export async function getIdHashSession(num = "066") {
+export async function getIdHashSession(user) {
     try {
-        return (await readJson(`${process.cwd()}/IdHashSession.json`))[num];
+        if (!ID_HASH_SESSION[user]) throw new Error();
+        return ID_HASH_SESSION[user];
     } catch (e) {
         console.log("error read IdHashSession.json\n");
         return await inputIdHashSession();
