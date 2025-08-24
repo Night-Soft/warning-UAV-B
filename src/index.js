@@ -7,6 +7,7 @@ import input from "input";
 import { ForwardController } from "./ForwardController.js";
 import { getIdHashSession, getKeywords } from "./utils.js";
 import {TARGET_CHANNEL, USER_NUMBER} from "./config.js"
+import "./page.js"
 
 async function main() {
    
