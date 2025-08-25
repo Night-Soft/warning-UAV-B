@@ -82,7 +82,7 @@ export const ForwardController = class {
         }
 
         if (channelName === "sumyliketop") {
-            if (text.includes("зараз") && message.media.photo) {
+            if (text.includes("зараз") && message.media?.photo) {
                 imgHasRed(this.client, message.media, channelName).then(isRed => {
                         console.log("isRed", isRed);
                         isRed && this.forwardMessage(message);
