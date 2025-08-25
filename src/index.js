@@ -5,15 +5,12 @@ import { EditedMessage } from "telegram/events/EditedMessage.js";
 import input from "input";
 
 import { ForwardController } from "./ForwardController.js";
-import { getIdHashSession, getKeywords } from "./utils.js";
-import {TARGET_CHANNEL, USER_NUMBER} from "./config.js"
+import { getIdHashSession } from "./utils.js";
+import {TARGET_CHANNEL, USER_NUMBER, CHANELS, POPULATED_AREAS} from "./config.js"
 import "./page.js"
 
 async function main() {
-   
     const { API_ID, API_HASH, SESSION_STRING } = await getIdHashSession(USER_NUMBER);
-    const { monitoredChannels, populatedAreas } = await getKeywords();
-
     const client = new TelegramClient(new StringSession(SESSION_STRING), API_ID, API_HASH);
 
     await client.start({
@@ -27,8 +24,8 @@ async function main() {
 
     const forwardController = new ForwardController(client, {
         targetChannel: TARGET_CHANNEL,
-        monitoredChannels,
-        populatedAreas
+        monitoredChannels: CHANELS,
+        populatedAreas: POPULATED_AREAS
     });
 
     client.addEventHandler(forwardController.messageListener, new NewMessage({}));    

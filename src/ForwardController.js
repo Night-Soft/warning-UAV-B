@@ -24,7 +24,11 @@ function hasText(array, text, channelName) {
         }
     }
     // POPULATED_AREAS
-    return array.some((keyword) => lowText.includes(keyword));
+    return array.some((keyword) => {
+        const isText = lowText.includes(keyword);
+        if (isText) console.log("isText", keyword);
+        return isText;
+    });
 }
 
 export const ForwardController = class {
