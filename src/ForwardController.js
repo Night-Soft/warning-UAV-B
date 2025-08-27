@@ -1,4 +1,5 @@
 import { checkRed } from "./img.js";
+import { D_AREA, D_AREA_EXCLUDES } from "./config.js";
 
 async function imgHasRed(client, media, channelName) {
     try {
@@ -7,6 +8,23 @@ async function imgHasRed(client, media, channelName) {
     } catch (error) {
         console.log("imgHasRed error", error);
     }
+
+}
+
+const isDArea = function (text) {
+    const isExclude = D_AREA_EXCLUDES.some((excludes) => text.includes(excludes));
+    const firstIndex = text.indexOf(D_AREA);
+    const lastIndex = text.lastIndexOf(D_AREA);
+
+    if (firstIndex !== lastIndex && isExclude) {
+        console.log("isDArea", text);
+        return true;
+    }
+    if (isExclude === false) {
+        console.log("isDArea", text);
+        return true;
+    }
+    return false;
 }
 
 function hasText(array, text, channelName) {
@@ -23,9 +41,12 @@ function hasText(array, text, channelName) {
             return true;
         }
     }
+
+    if (lowText.includes(D_AREA) && isDArea(text)) return true;
+
     // POPULATED_AREAS
     return array.some((keyword) => {
-        const isText = lowText.includes(keyword);
+        const isText = lowText.includes(keyword) || lowText.startsWith(keyword.substring(1));
         if (isText) console.log("isText", keyword);
         return isText;
     });
@@ -44,7 +65,7 @@ export const ForwardController = class {
     }
 
     forwardMessage = async (message, setId = true) => {
-        console.log(`📨 Пересылаем сообщение ${message.message}`);
+        console.log(`📨 Пересылаем сообщение ${message.message, message.id}`);
 
         if(setId) this.#lastSuccessId = message.id;
         return this.client.forwardMessages(this.targetChannel, {
