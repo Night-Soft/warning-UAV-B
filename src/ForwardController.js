@@ -95,6 +95,7 @@ export const ForwardController = class {
                 if (text === "" || text.includes("наразі")) {
                     imgHasRed(this.client, message.media, channelName).then(isRed => {
                         console.log("isRed", isRed);
+                        if (this.#lastSuccessId === message.id) return;
                         isRed && this.forwardMessage(message);
                     });
                     return;
@@ -106,6 +107,7 @@ export const ForwardController = class {
             if (text.includes("зараз") && message.media?.photo) {
                 imgHasRed(this.client, message.media, channelName).then(isRed => {
                         console.log("isRed", isRed);
+                        if (this.#lastSuccessId === message.id) return;
                         isRed && this.forwardMessage(message);
                 });
                 return;
