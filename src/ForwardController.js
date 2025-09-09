@@ -67,7 +67,11 @@ export const ForwardController = class {
     forwardMessage = async (message, setId = true) => {
         console.log(`📨 Пересылаем сообщение ${message.message, message.id}`);
 
-        if(setId) this.#lastSuccessId = message.id;
+        if (setId) {
+            if (this.lastSendedMessages.has(message.id)) return;
+            this.lastSendedMessages.set(message.id, message.message);
+        }
+
         return this.client.forwardMessages(this.targetChannel, {
             messages: message.id,
             fromPeer: message.chat
@@ -95,7 +99,7 @@ export const ForwardController = class {
                 if (text === "" || text.includes("наразі")) {
                     imgHasRed(this.client, message.media, channelName).then(isRed => {
                         console.log("isRed", isRed);
-                        if (this.#lastSuccessId === message.id) return;
+                        if (this.lastSendedMessages.has(message.id)) return;
                         isRed && this.forwardMessage(message);
                     });
                     return;
@@ -106,46 +110,74 @@ export const ForwardController = class {
         if (channelName === "sumyliketop") {
             if (text.includes("зараз") && message.media?.photo) {
                 imgHasRed(this.client, message.media, channelName).then(isRed => {
-                        console.log("isRed", isRed);
-                        if (this.#lastSuccessId === message.id) return;
-                        isRed && this.forwardMessage(message);
+                    console.log("isRed", isRed);
+                    if (this.lastSendedMessages.has(message.id)) return;
+                    isRed && this.forwardMessage(message);
                 });
                 return;
             }
 
-            if(message.voice) {
+            if (message.voice) {
                 this.forwardMessage(message);
                 return;
             }
         }
 
         if (!hasText(this.populatedAreas, text, channelName)) return;
-        
+
         this.forwardMessage(message);
     }
 
-    #lastSuccessId = 0;
+    lastSendedMessages = new LastSendedMessages(20);
     messageListener = async (event) => {
         try {
             const message = event.message;
             const chat = await message.getChat();
             const text = message.message;
 
-            // if (chat.username === "testWarningUAV") {
-            //     console.log(message);
-            // }
-
             if (
                 !chat.username ||
                 !this.monitoredChannels.includes(chat.username) ||
-                this.#lastSuccessId === message.id
+                this.lastSendedMessages.has(message.id)
             ) return;
 
-            //console.log("message", message);
-           // console.log(" check forwardIfNeeded");
             this.#forwardIfNeeded(text, chat.username, message);
         } catch (error) {
             console.error("❌ Ошибка:", error.message);
         }
+    }
+}
+
+export const LastSendedMessages = class {
+    constructor(numberOfMessages) {
+        const createSetWrapped = (target) => {
+            return (key, value) => {
+                if (target.size === numberOfMessages) {
+                    target.delete(target.keys().next().value);
+                }
+                target.set(key, value);
+            }
+        }
+
+        const methodCache = new Map();
+        return new Proxy(new Map(), {
+            get(target, prop) {
+                if (methodCache.has(prop)) return methodCache.get(prop);
+                if (prop === "size") return target[prop];
+                if (!Map.prototype[prop]) return target[prop];
+
+                if (prop === "set") {
+                    methodCache.set(prop, createSetWrapped(target));
+                    return methodCache.get(prop);
+                }
+
+                const value = Reflect.get(...arguments);
+                if (typeof value !== 'function') return value;
+
+                methodCache.set(prop, value.bind(target));
+                return methodCache.get(prop);
+            }
+
+        });
     }
 }
