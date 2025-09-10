@@ -42,7 +42,7 @@ function hasText(array, text, channelName) {
         }
     }
 
-    if (lowText.includes(D_AREA) && isDArea(text)) return true;
+    if (lowText.includes(D_AREA) && isDArea(lowText)) return true;
 
     // POPULATED_AREAS
     return array.some((keyword) => {
