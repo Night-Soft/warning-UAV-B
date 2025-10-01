@@ -120,7 +120,6 @@ export const ForwardController = class {
             this.lastSendedMessages.set(message.id, message.message);
         }
 
-        return;
         return this.client.forwardMessages(this.targetChannel, {
             messages: message.id,
             fromPeer: message.chat,
