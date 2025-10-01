@@ -27,6 +27,50 @@ const isDArea = function (text) {
     return false;
 }
 
+const alphabet = [
+    "а",
+    "б",
+    "в",
+    "г",
+    "ґ",
+    "д",
+    "е",
+    "є",
+    "ж",
+    "з",
+    "и",
+    "і",
+    "ї",
+    "й",
+    "к",
+    "л",
+    "м",
+    "н",
+    "о",
+    "п",
+    "р",
+    "с",
+    "т",
+    "у",
+    "ф",
+    "х",
+    "ц",
+    "ч",
+    "ш",
+    "щ",
+    "ь",
+    "ю",
+    "я"
+];
+
+const getIfA = (lowText, keyword) => {
+    const index = lowText.indexOf(keyword);
+    if (index > -1) {
+        return !alphabet.includes(lowText[index - 1]);
+    }
+    return false;
+}
+
 function hasText(array, text, channelName) {
     if (!text) return false;
 
@@ -46,7 +90,11 @@ function hasText(array, text, channelName) {
 
     // POPULATED_AREAS
     return array.some((keyword) => {
-        const isText = lowText.includes(keyword) || lowText.startsWith(keyword.substring(1));
+        const isText = (
+            lowText.includes(keyword) || 
+            lowText.startsWith(keyword.substring(1)) ||
+            getIfA(lowText, keyword.substring([1]))
+            );
         if (isText) console.log("isText", keyword);
         return isText;
     });
@@ -72,9 +120,11 @@ export const ForwardController = class {
             this.lastSendedMessages.set(message.id, message.message);
         }
 
+        return;
         return this.client.forwardMessages(this.targetChannel, {
             messages: message.id,
-            fromPeer: message.chat
+            fromPeer: message.chat,
+            silent: false
         });
     }
 
