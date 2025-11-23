@@ -1,14 +1,14 @@
 import { checkRed } from "./img.js";
 import { D_AREA, D_AREA_EXCLUDES } from "./config.js";
 
-async function imgHasRed(client, media, channelName) {
+async function imgHasRed(client, message, channelName) {
     try {
-        const buffer = await client.downloadMedia(media, { outputFile: false });
-        return await checkRed(buffer, channelName);
+        const buffer = await client.downloadMedia(message.media, { outputFile: false });
+        const isRed = await checkRed(buffer, channelName);
+        return { isRed, message }
     } catch (error) {
         console.log("imgHasRed error", error);
     }
-
 }
 
 const isDArea = function (text) {
@@ -100,6 +100,12 @@ function hasText(array, text, channelName) {
     });
 }
 
+const forwardIfHasRed = ({ isRed, message }) => {
+    console.log("isRed", isRed);
+    if (this.lastSendedMessages.has(message.id)) return;
+    isRed && this.forwardMessage(message);
+}
+
 export const ForwardController = class {
     constructor(client, {
         targetChannel,
@@ -113,7 +119,7 @@ export const ForwardController = class {
     }
 
     forwardMessage = async (message, setId = true) => {
-        console.log(`📨 Пересылаем сообщение ${message.message, message.id}`);
+        console.log(`📨 Пересылаем сообщение ${message.id}: ${message.message}`);
 
         if (setId) {
             if (this.lastSendedMessages.has(message.id)) return;
@@ -124,7 +130,7 @@ export const ForwardController = class {
             messages: message.id,
             fromPeer: message.chat,
             silent: false
-        });
+        }).catch((e) => { console.warn("Error:", e) });
     }
 
     #forwardIfNeeded = async (text, channelName, message) => {
@@ -146,23 +152,23 @@ export const ForwardController = class {
         if (channelName === "rdsprostir") {
             if (message.media?.photo) {
                 if (text === "" || text.includes("наразі")) {
-                    imgHasRed(this.client, message.media, channelName).then(isRed => {
-                        console.log("isRed", isRed);
-                        if (this.lastSendedMessages.has(message.id)) return;
-                        isRed && this.forwardMessage(message);
-                    });
+                    imgHasRed(this.client, message, channelName).then(forwardIfHasRed);
                     return;
+                }
+            }
+        }
+
+        if (channelName === "sumygo") {
+            if (message.media?.photo) {
+                if (text.includes("по шахедам")) {
+                    imgHasRed(this.client, message, channelName).then(forwardIfHasRed);
                 }
             }
         }
 
         if (channelName === "sumyliketop") {
             if (text.includes("зараз") && message.media?.photo) {
-                imgHasRed(this.client, message.media, channelName).then(isRed => {
-                    console.log("isRed", isRed);
-                    if (this.lastSendedMessages.has(message.id)) return;
-                    isRed && this.forwardMessage(message);
-                });
+                imgHasRed(this.client, message, channelName).then(forwardIfHasRed);
                 return;
             }
 

@@ -1,25 +1,18 @@
 import { Jimp, intToRGBA } from "jimp";
 
-const coordSumyLike = {
-    x: 780,
-    y: 760,
-    w: 210,
-    h: 210
-}
-
-const coordRds = {
-    x: 660,
-    y: 750,
-    w: 210,
-    h: 210
-}
+const channelCoords = new Map();
+channelCoords.set("sumyliketop", { x: 780, y: 760, w: 210, h: 210 });
+channelCoords.set("rdsprostir", { x: 660, y: 750, w: 210, h: 210 });
+channelCoords.set("sumygo", { x: 744, y: 810, w: 200, h: 200 });
 
 export const checkRed = async (buffer = "isRed.jpg", channel) => {
     if (!buffer) throw new Error(`the buffer is: ${typeof buffer}`);
 
-    const image = await Jimp.read(buffer);
+    const coords = channelCoords.get(channel);
+    if (!coords) return false;
 
-    const { x, y, w, h } = channel === "rdsprostir" ? coordRds : coordSumyLike;
+    const { x, y, w, h } = coords;
+    const image = await Jimp.read(buffer);
 
     let hasRed = false;
 
@@ -30,7 +23,7 @@ export const checkRed = async (buffer = "isRed.jpg", channel) => {
             const rgba = intToRGBA(color);
 
             // проверяем "достаточно красный"
-            if (rgba.r > 150 && rgba.r > rgba.g + 50 && rgba.r > rgba.b + 50) {
+            if (rgba.r > 200 && rgba.r > rgba.g + 50 && rgba.r > rgba.b + 50) {
                 hasRed = true;
                 break;
             }
