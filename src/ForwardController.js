@@ -98,13 +98,7 @@ function hasText(array, text, channelName) {
         if (isText) console.log("isText", keyword);
         return isText;
     });
-}
-
-const forwardIfHasRed = ({ isRed, message }) => {
-    console.log("isRed", isRed);
-    if (this.lastSendedMessages.has(message.id)) return;
-    isRed && this.forwardMessage(message);
-}
+} 
 
 export const ForwardController = class {
     constructor(client, {
@@ -133,6 +127,12 @@ export const ForwardController = class {
         }).catch((e) => { console.warn("Error:", e) });
     }
 
+    #forwardIfHasRed = ({ isRed, message }) => {
+        console.log("isRed", isRed);
+        if (this.lastSendedMessages.has(message.id)) return;
+        isRed && this.forwardMessage(message);
+    }
+    
     #forwardIfNeeded = async (text, channelName, message) => {
         text = text.toLowerCase();
 
@@ -152,7 +152,7 @@ export const ForwardController = class {
         if (channelName === "rdsprostir") {
             if (message.media?.photo) {
                 if (text === "" || text.includes("наразі")) {
-                    imgHasRed(this.client, message, channelName).then(forwardIfHasRed);
+                    imgHasRed(this.client, message, channelName).then(this.#forwardIfHasRed);
                     return;
                 }
             }
@@ -161,14 +161,14 @@ export const ForwardController = class {
         if (channelName === "sumygo") {
             if (message.media?.photo) {
                 if (text.includes("по шахедам")) {
-                    imgHasRed(this.client, message, channelName).then(forwardIfHasRed);
+                    imgHasRed(this.client, message, channelName).then(this.#forwardIfHasRed);
                 }
             }
         }
 
         if (channelName === "sumyliketop") {
             if (text.includes("зараз") && message.media?.photo) {
-                imgHasRed(this.client, message, channelName).then(forwardIfHasRed);
+                imgHasRed(this.client, message, channelName).then(this.#forwardIfHasRed);
                 return;
             }
 
