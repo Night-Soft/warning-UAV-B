@@ -1,5 +1,5 @@
 import { checkRed } from "./img.js";
-import { D_AREA, D_AREA_EXCLUDES } from "./config.js";
+import { D_AREA, D_AREA_EXCLUDES, SUMYGO_KEYS } from "./config.js";
 
 async function imgHasRed(client, message, channelName) {
     try {
@@ -160,11 +160,11 @@ export const ForwardController = class {
 
         if (channelName === "sumygo") {
             if (message.media?.photo) {
-                if (text.includes("по шахедам")) {
+                if (SUMYGO_KEYS.some((v)=> text.includes(v))) {
                     imgHasRed(this.client, message, channelName).then(this.#forwardIfHasRed);
                 }
             }
-        }
+        }  
 
         if (channelName === "sumyliketop") {
             if (text.includes("зараз") && message.media?.photo) {
