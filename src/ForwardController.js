@@ -204,7 +204,10 @@ export const ForwardController = class {
 }
 
 export const LastSendedMessages = class {
+    static instance = null;
     constructor(numberOfMessages) {
+        if(LastSendedMessages.instance) return LastSendedMessages.instance;
+
         const createSetWrapped = (target) => {
             return (key, value) => {
                 if (target.size === numberOfMessages) {
@@ -215,7 +218,7 @@ export const LastSendedMessages = class {
         }
 
         const methodCache = new Map();
-        return new Proxy(new Map(), {
+        const list = new Proxy(new Map(), {
             get(target, prop) {
                 if (methodCache.has(prop)) return methodCache.get(prop);
                 if (prop === "size") return target[prop];
@@ -232,7 +235,9 @@ export const LastSendedMessages = class {
                 methodCache.set(prop, value.bind(target));
                 return methodCache.get(prop);
             }
-
         });
+
+        LastSendedMessages.instance = list;
+        return list;
     }
 }

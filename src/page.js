@@ -10,7 +10,7 @@ app.get('/', (req, res) => {
 });
 
 app.get('/pass', (req, res) => {
-  const lastSendedMessages = LastSendedMessages.instances[0];
+  const lastSendedMessages = LastSendedMessages.instance;
   let text;
   lastSendedMessages.forEach(message => {
     text += `<h3>${message}</h3><br>`
