@@ -28,7 +28,7 @@ app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
 });
 
-app.post("/compare", cors(corsOptionsForCompare), (req, res) => {
+app.post("/compare", (req, res) => {
   console.log('app post compare', req.body);
   if (!req.body.COEF) {
     console.log('Wrong data', req.body);
