@@ -117,7 +117,10 @@ export const ForwardController = class {
 
         if (setId) {
             if (this.lastSendedMessages.has(message.id)) return;
-            this.lastSendedMessages.set(message.id, message.message);
+            this.lastSendedMessages.set(message.id, {
+                time: Date.now(),
+                message: message.message
+            });
         }
 
         return this.client.forwardMessages(this.targetChannel, {

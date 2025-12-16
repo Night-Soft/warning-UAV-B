@@ -16,7 +16,7 @@ app.get('/', (req, res) => {
 app.get('/pass', (req, res) => {
   const lastSendedMessages = LastSendedMessages.instance;
   let text;
-  lastSendedMessages.forEach((message, time) => {
+  lastSendedMessages.forEach(({message, time}) => {
     let time = new Date(Number(time)).toLocaleString();
     text =+ `<h4>${time}</h4>`;
     text += `<span>${message}</span><br>`
