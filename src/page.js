@@ -29,17 +29,16 @@ app.listen(port, () => {
 });
 
 app.post("/compare", (req, res) => {
-  console.log('app post compare', req.body);
+  console.log('app post compare');
   if (!req.body.COEF) {
     console.log('Wrong data', req.body);
     res.status(400).json({ error: "Wrong data" });
     return;
   }
-  //const data = JSON.stringify(req.body);
-  const message = createDataAsMessage(req.body);
-  compareData.set(Date.now(), data);
 
-  console.log(data)
+  const message = createDataAsMessage(req.body);
+
+  console.log(message)
   fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
