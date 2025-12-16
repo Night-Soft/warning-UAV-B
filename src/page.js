@@ -17,8 +17,8 @@ app.get('/pass', (req, res) => {
   const lastSendedMessages = LastSendedMessages.instance;
   let text;
   lastSendedMessages.forEach(({message, time}) => {
-    let date = new Date(Number(date)).toLocaleString();
-    text =+ `<h4>${time}</h4>`;
+    const date = new Date(Number(time)).toLocaleString();
+    text =+ `<h4>${date}</h4>`;
     text += `<span>${message}</span><br>`
   });
   res.send(text);
