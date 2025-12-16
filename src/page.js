@@ -2,8 +2,12 @@ import { LastSendedMessages } from "./ForwardController.js";
 import { TARGET_CHANNEL, TG_TOKEN } from "./config.js";
 
 import express from 'express';
+import cors from'cors';
+
 const app = express();
 const port = process.env.PORT || 4000;
+
+app.use(express.json());
 
 app.get('/', (req, res) => {
   res.send("<h1>Warning UAV B ✅</h1>");
@@ -12,8 +16,10 @@ app.get('/', (req, res) => {
 app.get('/pass', (req, res) => {
   const lastSendedMessages = LastSendedMessages.instance;
   let text;
-  lastSendedMessages.forEach(message => {
-    text += `<h3>${message}</h3><br>`
+  lastSendedMessages.forEach((message, time) => {
+    let time = new Date(Number(time)).toLocaleString();
+    text =+ `<h4>${time}</h4>`;
+    text += `<span>${message}</span><br>`
   });
   res.send(text);
 });
@@ -22,11 +28,11 @@ app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
 });
 
-app.post("/compare", (req, res) => {
+app.post("/compare", cors(corsOptionsForCompare), (req, res) => {
   console.log('app post compare', req.body);
   if (!req.body.COEF) {
     console.log('Wrong data', req.body);
-    res.send(JSON.stringify({ error: "Wrong data" }));
+    res.status(400).json({ error: "Wrong data" });
     return;
   }
   //const data = JSON.stringify(req.body);
@@ -43,8 +49,8 @@ app.post("/compare", (req, res) => {
     })
   });
 
-  res.sendStatus(200);
-  res.send(JSON.stringify({ succesWrite: true }));
+  res.status(200).json({ succesWrite: true });
+
 });
 
 const createDataAsMessage = (data) => {
