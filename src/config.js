@@ -16,4 +16,5 @@ export const D_AREA = process.env.D_AREA;
 export const D_AREA_EXCLUDES = JSON.parse(process.env.D_AREA_EXCLUDES).excludes;
 export const SUMYGO_KEYS = JSON.parse(process.env.SUMYGO_KEYS).keys;
 export const TG_TOKEN = process.env.TG_TOKEN;
+export const USER_CHAT_ID = process.env.USER_CHAT_ID;
 

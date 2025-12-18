@@ -1,5 +1,5 @@
 import { LastSendedMessages } from "./ForwardController.js";
-import { TARGET_CHANNEL, TG_TOKEN } from "./config.js";
+import { USER_CHAT_ID, TG_TOKEN } from "./config.js";
 
 import express from 'express';
 import cors from'cors';
@@ -18,8 +18,8 @@ app.get('/pass', (req, res) => {
   let text;
   lastSendedMessages.forEach(({message, time}) => {
     const date = new Date(Number(time)).toLocaleString();
-    text =+ `<h4>${date}</h4>`;
-    text += `<span>${message}</span><br>`
+    text += `<h4>${date}</h4>`;
+    text += `<span>${message}</span><br>`;
   });
   res.send(text);
 });
@@ -43,8 +43,9 @@ app.post("/compare", (req, res) => {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      chat_id: TARGET_CHANNEL,
-      text: message
+      chat_id: USER_CHAT_ID,
+      text: message,
+      parse_mode: 'MarkdownV2'
     })
   });
 
