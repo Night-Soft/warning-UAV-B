@@ -45,7 +45,7 @@ app.post("/compare", (req, res) => {
     body: JSON.stringify({
       chat_id: USER_CHAT_ID,
       text: message,
-      parse_mode: 'MarkdownV2'
+      parse_mode: 'HTML'
     })
   });
 
@@ -57,16 +57,17 @@ const createDataAsMessage = (data) => {
   return Object.keys(data).reduce((text, current, index) => {
     if (index === 5) return text;
     if (index === 0) {
-      text.push(`**Similarity: ${data.similarity}\nCoef: ${data.COEF}**\n`);
+      text.push(`Similarity: <b>${data.similarity}</b>\nCoef: ${data.COEF}\n`);
       return text;
     }
 
-    const val = Object.entries(data[current]).reduce((textArr, currentArr, index) => {
-      textArr.push(currentArr.join(": "))
+    const val = Object.entries(data[current]).reduce((textArr, currentArr) => {
+      if (currentArr[0] === "general") currentArr[1] = `<b>${currentArr[1]}</b>`
+      textArr.push(currentArr.join(": "));
       return textArr; // energy
     }, []).join(`,\n       `);
 
-    text.push(`\n    __${current}__:\n       ${val}`); //midddle
+    text.push(`\n    <u>${current}</u>:\n       ${val}`); //midddle
 
     return text;
   }, []).join("");
