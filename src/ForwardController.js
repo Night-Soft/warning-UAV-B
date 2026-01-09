@@ -1,5 +1,5 @@
 import { checkRed } from "./img.js";
-import { D_AREA, D_AREA_EXCLUDES, SUMYGO_KEYS } from "./config.js";
+import { D_AREA, D_AREA_EXCLUDES, SUMYGO_KEYS, ALPHABET } from "./config.js";
 
 async function imgHasRed(client, message, channelName) {
     try {
@@ -27,46 +27,10 @@ const isDArea = function (text) {
     return false;
 }
 
-const alphabet = [
-    "а",
-    "б",
-    "в",
-    "г",
-    "ґ",
-    "д",
-    "е",
-    "є",
-    "ж",
-    "з",
-    "и",
-    "і",
-    "ї",
-    "й",
-    "к",
-    "л",
-    "м",
-    "н",
-    "о",
-    "п",
-    "р",
-    "с",
-    "т",
-    "у",
-    "ф",
-    "х",
-    "ц",
-    "ч",
-    "ш",
-    "щ",
-    "ь",
-    "ю",
-    "я"
-];
-
 const getIfA = (lowText, keyword) => {
     const index = lowText.indexOf(keyword);
     if (index > -1) {
-        return !alphabet.includes(lowText[index - 1]);
+        return !ALPHABET.includes(lowText[index - 1]);
     }
     return false;
 }

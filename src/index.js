@@ -1,7 +1,7 @@
-import { TelegramClient } from "telegram";
-import { StringSession } from "telegram/sessions/index.js";
-import { NewMessage } from "telegram/events/index.js";
-import { EditedMessage } from "telegram/events/EditedMessage.js";
+import { TelegramClient } from "teleproto";
+import { StringSession } from "teleproto/sessions/index.js";
+import { NewMessage } from "teleproto/events/index.js";
+import { EditedMessage } from "teleproto/events/EditedMessage.js";
 import input from "input";
 
 import { ForwardController } from "./ForwardController.js";
@@ -19,7 +19,6 @@ async function main() {
         phoneCode: async () => await input.text("Введите код из SMS: "),
         onError: (err) => console.log("Ошибка:", err),
     });
-
     console.log("✅ Авторизация успешна!");
 
     const forwardController = new ForwardController(client, {
